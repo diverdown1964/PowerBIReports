@@ -1,0 +1,61 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 378,
+            "y": 0
+          },
+          "nodeIndex": "Solar Telemetry",
+          "nodeLineageTag": "a658e098-0952-485b-b463-f552a0851d7b",
+          "size": {
+            "height": 618,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 0
+          },
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "546fe641-49e2-42ad-8993-9b4091e48b37",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 895,
+            "y": 18
+          },
+          "nodeIndex": "Time",
+          "nodeLineageTag": "3c4a5b54-1be1-413d-953e-23dfce9f5eb1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

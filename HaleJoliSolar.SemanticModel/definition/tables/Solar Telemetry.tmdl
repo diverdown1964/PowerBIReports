@@ -1,0 +1,558 @@
+table 'Solar Telemetry'
+	lineageTag: a658e098-0952-485b-b463-f552a0851d7b
+
+	/// Total solar energy produced (Wh)
+	measure 'Total Production' = SUM('Solar Telemetry'[ProductionWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: 74bfdfa2-c699-4a77-ad46-d59d5d7edf11
+
+	/// Total energy consumed (Wh)
+	measure 'Total Consumption' = SUM('Solar Telemetry'[ConsumptionWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: f98cbe99-e95e-454e-95bf-9247cacec515
+
+	/// Total energy imported from grid (Wh)
+	measure 'Total Grid Import' = SUM('Solar Telemetry'[GridImportWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: 535890aa-c952-41be-bd15-5b0ff60850de
+
+	/// Total energy exported to grid (Wh)
+	measure 'Total Grid Export' = SUM('Solar Telemetry'[GridExportWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: d52d0cae-77fa-4569-b7b1-48766206f5ac
+
+	/// Total energy charged to battery (Wh)
+	measure 'Total Battery Charge' = SUM('Solar Telemetry'[BatteryChargeWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: a4ca4d6b-2b6d-4c73-8bbd-01a240367eea
+
+	/// Total energy discharged from battery (Wh)
+	measure 'Total Battery Discharge' = SUM('Solar Telemetry'[BatteryDischargeWh])
+		formatString: #,##0
+		displayFolder: Energy Totals
+		lineageTag: afd4fddb-78ef-4e76-9966-c4f6b8fb0f3f
+
+	/// Production in kilowatt-hours
+	measure 'Production kWh' = [Total Production] / 1000
+		formatString: #,##0.0
+		displayFolder: Energy kWh
+		lineageTag: e6ca2353-aa3c-48af-ad9a-04897580d0cf
+
+	/// Consumption in kilowatt-hours
+	measure 'Consumption kWh' = [Total Consumption] / 1000
+		formatString: #,##0.0
+		displayFolder: Energy kWh
+		lineageTag: b58b7adc-84aa-48f0-8f49-9c8c05e7a394
+
+	/// Grid import in kilowatt-hours
+	measure 'Grid Import kWh' = [Total Grid Import] / 1000
+		formatString: #,##0.0
+		displayFolder: Energy kWh
+		lineageTag: 2b774a82-7b51-46bd-b412-037c595147a8
+
+	/// Grid export in kilowatt-hours
+	measure 'Grid Export kWh' = [Total Grid Export] / 1000
+		formatString: #,##0.0
+		displayFolder: Energy kWh
+		lineageTag: cd64aa60-d744-4e17-97ba-9c9b8be54a21
+
+	/// Percentage of production used on-site
+	measure 'Self-Consumption Rate' = DIVIDE([Total Production] - [Total Grid Export], [Total Production], 0)
+		formatString: 0.0%
+		displayFolder: Efficiency Metrics
+		lineageTag: d645747c-06b8-449d-b5b0-8bc2abef8eb4
+
+	/// Percentage of consumption from own production
+	measure 'Self-Sufficiency Rate' = DIVIDE([Total Consumption] - [Total Grid Import], [Total Consumption], 0)
+		formatString: 0.0%
+		displayFolder: Efficiency Metrics
+		lineageTag: ce485d4f-1c22-4b85-8a8b-be25f84e4b6b
+
+	/// Positive = net exporter (Wh)
+	measure 'Net Grid Position' = [Total Grid Export] - [Total Grid Import]
+		formatString: #,##0
+		displayFolder: Efficiency Metrics
+		lineageTag: 93d4cac1-af86-424c-ad28-a3cedc19d08f
+
+	/// Net energy from battery (Wh)
+	measure 'Net Battery Flow' = [Total Battery Discharge] - [Total Battery Charge]
+		formatString: #,##0
+		displayFolder: Battery Metrics
+		lineageTag: 48520b36-2f80-4cf4-86f6-706beb5a3f2b
+
+	/// Average state of charge
+	measure 'Avg Battery SOC' = AVERAGE('Solar Telemetry'[BatteryStateOfChargePercent])
+		formatString: 0.0%
+		displayFolder: Battery Metrics
+		lineageTag: 2de7b9a8-d8d2-45d8-8443-fa4852cb2559
+
+	/// Lowest state of charge
+	measure 'Min Battery SOC' = MIN('Solar Telemetry'[BatteryStateOfChargePercent])
+		formatString: 0.0%
+		displayFolder: Battery Metrics
+		lineageTag: 73a01073-51a2-40ea-a8cb-ef2e34f6490f
+
+	/// Highest state of charge
+	measure 'Max Battery SOC' = MAX('Solar Telemetry'[BatteryStateOfChargePercent])
+		formatString: 0.0%
+		displayFolder: Battery Metrics
+		lineageTag: 716ae06c-7e47-4d4e-a88a-2c6b3a791e0e
+
+	/// Year-to-date production (Wh)
+	measure 'Production YTD' = TOTALYTD([Total Production], 'Dates'[Date])
+		formatString: #,##0
+		displayFolder: Time Intelligence
+		lineageTag: 92754ca4-926c-47ce-a326-ce0631b8f6c4
+
+	/// Month-to-date production (Wh)
+	measure 'Production MTD' = TOTALMTD([Total Production], 'Dates'[Date])
+		formatString: #,##0
+		displayFolder: Time Intelligence
+		lineageTag: 04b8b71d-9259-45c0-8d0b-a9790c8db827
+
+	/// Previous day production (Wh)
+	measure 'Production Previous Day' = CALCULATE([Total Production], DATEADD('Dates'[Date], -1, DAY))
+		formatString: #,##0
+		displayFolder: Time Intelligence
+		lineageTag: 0904bbfc-5d76-4cd7-89be-0757368bae09
+
+	/// Same period last month (Wh)
+	measure 'Production Previous Month' = CALCULATE([Total Production], DATEADD('Dates'[Date], -1, MONTH))
+		formatString: #,##0
+		displayFolder: MoM Comparisons
+		lineageTag: 7bd8cec5-a3fc-4182-b181-a800c69bf194
+
+	/// Month-over-month change (Wh)
+	measure 'Production MoM Change' = [Total Production] - [Production Previous Month]
+		formatString: #,##0
+		displayFolder: MoM Comparisons
+		lineageTag: e4001540-9fe7-40b3-bdd2-f86b1ae12162
+
+	/// Month-over-month percentage change
+	measure 'Production MoM %' = DIVIDE([Total Production] - [Production Previous Month], [Production Previous Month], 0)
+		formatString: 0.0%
+		displayFolder: MoM Comparisons
+		lineageTag: b86ab1f8-410a-4d6d-af60-1d1724ff14b7
+
+	/// Same period last month (Wh)
+	measure 'Consumption Previous Month' = CALCULATE([Total Consumption], DATEADD('Dates'[Date], -1, MONTH))
+		formatString: #,##0
+		displayFolder: MoM Comparisons
+		lineageTag: e1525c91-84ab-4a56-90c4-4d4d24b936b2
+
+	/// Month-over-month change (Wh)
+	measure 'Consumption MoM Change' = [Total Consumption] - [Consumption Previous Month]
+		formatString: #,##0
+		displayFolder: MoM Comparisons
+		lineageTag: 75109e73-8f0c-410a-8957-20f8e1057bcc
+
+	/// Month-over-month percentage change
+	measure 'Consumption MoM %' = DIVIDE([Total Consumption] - [Consumption Previous Month], [Consumption Previous Month], 0)
+		formatString: 0.0%
+		displayFolder: MoM Comparisons
+		lineageTag: c419a103-0997-46f0-8e7a-af3ba2c1279e
+
+	/// Same period last year (Wh)
+	measure 'Production Previous Year' = CALCULATE([Total Production], SAMEPERIODLASTYEAR('Dates'[Date]))
+		formatString: #,##0
+		displayFolder: YoY Comparisons
+		lineageTag: 470be863-681b-49f8-8e2a-173c5423228e
+
+	/// Year-over-year change (Wh)
+	measure 'Production YoY Change' = [Total Production] - [Production Previous Year]
+		formatString: #,##0
+		displayFolder: YoY Comparisons
+		lineageTag: d93dfbef-70cd-4dd3-b3c5-689bb76485d3
+
+	/// Year-over-year percentage change
+	measure 'Production YoY %' = DIVIDE([Total Production] - [Production Previous Year], [Production Previous Year], 0)
+		formatString: 0.0%
+		displayFolder: YoY Comparisons
+		lineageTag: 3b643d93-fce4-40e3-b7f1-fce263dc6b1c
+
+	/// Same period last year (Wh)
+	measure 'Consumption Previous Year' = CALCULATE([Total Consumption], SAMEPERIODLASTYEAR('Dates'[Date]))
+		formatString: #,##0
+		displayFolder: YoY Comparisons
+		lineageTag: 2f5f4ed9-ea42-414a-b56b-41c7973b0ec9
+
+	/// Year-over-year change (Wh)
+	measure 'Consumption YoY Change' = [Total Consumption] - [Consumption Previous Year]
+		formatString: #,##0
+		displayFolder: YoY Comparisons
+		lineageTag: 57e19e36-b057-4b00-9666-a90fd1509dd7
+
+	/// Year-over-year percentage change
+	measure 'Consumption YoY %' = DIVIDE([Total Consumption] - [Consumption Previous Year], [Consumption Previous Year], 0)
+		formatString: 0.0%
+		displayFolder: YoY Comparisons
+		lineageTag: e29277d6-b7aa-4700-b194-3c099f8beb16
+
+	/// Grid import year-over-year percentage change
+	measure 'Grid Import YoY %' = VAR PY = CALCULATE([Total Grid Import], SAMEPERIODLASTYEAR('Dates'[Date])) RETURN DIVIDE([Total Grid Import] - PY, PY, 0)
+		formatString: 0.0%
+		displayFolder: YoY Comparisons
+		lineageTag: 05fc1b6d-c128-450c-a360-c9e1924eb561
+
+	/// Self-sufficiency rate change vs last year (percentage points)
+	measure 'Self-Sufficiency YoY Change' = VAR PY = CALCULATE([Self-Sufficiency Rate], SAMEPERIODLASTYEAR('Dates'[Date])) RETURN [Self-Sufficiency Rate] - PY
+		formatString: 0.0 pp
+		displayFolder: YoY Comparisons
+		lineageTag: a944364c-40bd-41cf-8209-d6489064eaff
+
+	/// Total energy consumed (Wh)
+	measure 'Average Daily Consumption' = (SUM('Solar Telemetry'[ConsumptionWh])/1000)/COUNTROWS(Dates)
+		formatString: #,##0
+		displayFolder: Energy Averages
+		lineageTag: 6b5f455e-e51a-4144-92b4-a5442eb94c50
+
+	/// Number of days with data in current context
+	measure 'Days in Period' = DISTINCTCOUNT('Solar Telemetry'[ReadingDateLocal])
+		formatString: #,##0
+		displayFolder: Energy Averages
+		lineageTag: 931a62b2-0fc7-4488-841e-73ef7ab0529c
+
+	/// Average daily solar production (kWh)
+	measure 'Average Daily Production' = [Production kWh] / [Days in Period]
+		formatString: #,##0.0
+		displayFolder: Energy Averages
+		lineageTag: eb00d4a4-2d51-4a59-9448-d4fa1e08afc6
+
+	/// Average daily grid import (kWh)
+	measure 'Average Daily Grid Import' = [Grid Import kWh] / [Days in Period]
+		formatString: #,##0.0
+		displayFolder: Energy Averages
+		lineageTag: 70d9ffe0-b746-4ec9-b333-619ad8a8e14f
+
+	/// Average daily grid export (kWh)
+	measure 'Average Daily Grid Export' = [Grid Export kWh] / [Days in Period]
+		formatString: #,##0.0
+		displayFolder: Energy Averages
+		lineageTag: f927aa5c-de80-4b0a-b48e-df2a1546c62e
+
+	/// Average production per hour (kWh) - 4 readings per hour
+	measure 'Average Hourly Production' = [Production kWh] / COUNTROWS('Solar Telemetry') * 4
+		formatString: #,##0.00
+		displayFolder: Energy Averages
+		lineageTag: be418c65-7eff-4761-bbea-e79e5a0af6e4
+
+	/// Average consumption per hour (kWh) - 4 readings per hour
+	measure 'Average Hourly Consumption' = [Consumption kWh] / COUNTROWS('Solar Telemetry') * 4
+		formatString: #,##0.00
+		displayFolder: Energy Averages
+		lineageTag: 05715608-4ba2-439c-9f35-69c30b52ce3b
+
+	/// Cost of grid imports at current flat rate
+	measure 'Grid Import Cost' = [Grid Import kWh] * [Power Rate]
+		formatString: $#,##0.00
+		displayFolder: Costs
+		lineageTag: 3190e4a7-9010-4bff-ada3-3e574e226693
+
+	/// Value of grid exports at current rate
+	measure 'Grid Export Value' = [Grid Export kWh] * [Power Rate]
+		formatString: $#,##0.00
+		displayFolder: Costs
+		lineageTag: d1dc0097-77a6-4d70-924a-2757eaa32484
+
+	/// Net cost of grid usage (import - export credit)
+	measure 'Net Grid Cost' = [Grid Import Cost] - [Grid Export Value]
+		formatString: $#,##0.00
+		displayFolder: Costs
+		lineageTag: 7bb598db-3215-4e13-b249-67244d64d2d5
+
+	/// Average daily grid electricity cost
+	measure 'Average Daily Grid Cost' = [Net Grid Cost] / [Days in Period]
+		formatString: $#,##0.00
+		displayFolder: Costs
+		lineageTag: 9355a60a-6c0c-4b09-a5b7-9acb27b2d051
+
+	/// Projected 30-day grid cost based on average
+	measure 'Projected Monthly Cost' = [Average Daily Grid Cost] * 30
+		formatString: $#,##0.00
+		displayFolder: Costs
+		lineageTag: 198ae1f4-3150-440a-b8ae-c47dbd3731ed
+
+	/// Value of solar production at current rate
+	measure 'Solar Savings' = [Production kWh] * [Power Rate]
+		formatString: $#,##0.00
+		displayFolder: Savings
+		lineageTag: dca1c9c7-6cd3-492e-9148-2b892ce2f55a
+
+	/// Average daily savings from solar
+	measure 'Average Daily Solar Savings' = [Solar Savings] / [Days in Period]
+		formatString: $#,##0.00
+		displayFolder: Savings
+		lineageTag: 13b76b11-daf6-49a4-87eb-786259a4688a
+
+	/// Projected 30-day solar savings
+	measure 'Projected Monthly Solar Savings' = [Average Daily Solar Savings] * 30
+		formatString: $#,##0.00
+		displayFolder: Savings
+		lineageTag: 99488042-514f-4f33-bf5c-3d0c24500fbe
+
+	/// Determines TOU period based on hour: On-Peak (17-20), Mid-Day (9-16), Off-Peak (0-8, 21-23)
+	measure 'TOU Import Cost' =
+			VAR OnPeakRate = [TOU On-Peak Rate]
+			VAR MidDayRate = [TOU Mid-Day Rate]
+			VAR OffPeakRate = [TOU Off-Peak Rate]
+			VAR OnPeakImport = CALCULATE([Grid Import kWh], FILTER('Time', 'Time'[Hour] >= 17 && 'Time'[Hour] <= 20))
+			VAR MidDayImport = CALCULATE([Grid Import kWh], FILTER('Time', 'Time'[Hour] >= 9 && 'Time'[Hour] <= 16))
+			VAR OffPeakImport = CALCULATE([Grid Import kWh], FILTER('Time', 'Time'[Hour] < 9 || 'Time'[Hour] >= 21))
+			RETURN
+			    OnPeakImport * OnPeakRate + MidDayImport * MidDayRate + OffPeakImport * OffPeakRate
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: dfe54037-2536-469f-a8ee-05e752a875c9
+
+	/// Calculates TOU export credit (using Mid-Day rate for solar exports)
+	measure 'TOU Export Value' =
+			VAR MidDayRate = [TOU Mid-Day Rate]
+			VAR OffPeakRate = [TOU Off-Peak Rate]
+			VAR MidDayExport = CALCULATE([Grid Export kWh], FILTER('Time', 'Time'[Hour] >= 9 && 'Time'[Hour] <= 16))
+			VAR OtherExport = CALCULATE([Grid Export kWh], FILTER('Time', 'Time'[Hour] < 9 || 'Time'[Hour] >= 17))
+			RETURN
+			    MidDayExport * MidDayRate + OtherExport * OffPeakRate
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: f6faad58-81b5-4ef6-9255-3ed20a9675d1
+
+	/// Net cost under TOU billing
+	measure 'TOU Net Cost' = [TOU Import Cost] - [TOU Export Value]
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: 3fda1f64-488c-4c48-8751-ea26ea8f721b
+
+	/// Difference between flat rate and TOU (positive = TOU saves money)
+	measure 'TOU Savings vs Flat Rate' = [Net Grid Cost] - [TOU Net Cost]
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: 2a7571f3-be28-42ad-9c1c-8cd055dad783
+
+	/// Daily average TOU savings (or cost increase if negative)
+	measure 'Average Daily TOU Savings' = [TOU Savings vs Flat Rate] / [Days in Period]
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: 2ec865a0-b264-4ffb-b177-94ba5ce856c2
+
+	/// Projected 30-day TOU savings
+	measure 'Projected Monthly TOU Savings' = [Average Daily TOU Savings] * 30
+		formatString: $#,##0.00
+		displayFolder: TOU Analysis
+		lineageTag: a442d9c4-3d29-4d12-b237-8a911ad85f7a
+
+	/// Average daily battery charge (kWh)
+	measure 'Average Daily Battery Charge' = ([Total Battery Charge] / 1000) / [Days in Period]
+		formatString: #,##0.0
+		displayFolder: Energy Averages
+		lineageTag: 0b499692-13a8-4a37-acbb-8b7b021d2855
+
+	/// Average daily battery discharge (kWh)
+	measure 'Average Daily Battery Discharge' = ([Total Battery Discharge] / 1000) / [Days in Period]
+		formatString: #,##0.0
+		displayFolder: Energy Averages
+		lineageTag: 1b5c55bd-9ac6-45d3-9716-39aa315dfebc
+
+	column SystemId
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: fcd16114-02e1-4b8d-938a-f395d4416bb5
+		summarizeBy: count
+		sourceColumn: SystemId
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReadingDateTimeUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: 7bbf5392-3f50-4e58-9362-45e182d60ca3
+		summarizeBy: none
+		sourceColumn: ReadingDateTimeUTC
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReadingDateUTC
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: datetimeoffset
+		lineageTag: e77bc588-0d1a-4400-8620-add8c440dc77
+		summarizeBy: none
+		sourceColumn: ReadingDateUTC
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReadingDateTimeLocal
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: bab280da-96f0-4849-b557-2c370fe81a24
+		summarizeBy: none
+		sourceColumn: ReadingDateTimeLocal
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReadingDateLocal
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: date
+		lineageTag: b0b4a0a4-fa2d-4975-ab77-e561ab73776c
+		summarizeBy: none
+		sourceColumn: ReadingDateLocal
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ProductionWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: a4eca4e2-100e-4e2e-bc5e-674e95aac7ab
+		summarizeBy: sum
+		sourceColumn: ProductionWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ProductionDevices
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 0d7d0f36-4502-4ca6-b80d-d60a97ce779c
+		summarizeBy: sum
+		sourceColumn: ProductionDevices
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConsumptionWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 0349066b-afdf-4947-a4c0-d5ddef408317
+		summarizeBy: sum
+		sourceColumn: ConsumptionWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ConsumptionDevices
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 8b8e4b67-1f4a-4601-bd70-337c7896191a
+		summarizeBy: sum
+		sourceColumn: ConsumptionDevices
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatteryChargeWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: ec3193f4-e54e-4cfe-9bfb-7df66af8beb3
+		summarizeBy: sum
+		sourceColumn: BatteryChargeWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BatteryDischargeWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: c108cea7-2d7f-46ec-b8c2-5ca4d1e3fa59
+		summarizeBy: sum
+		sourceColumn: BatteryDischargeWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BatteryStateOfChargePercent
+		dataType: double
+		sourceProviderType: double
+		lineageTag: d19cba50-80f5-4ff7-9378-b7ad29daecf6
+		summarizeBy: sum
+		sourceColumn: BatteryStateOfChargePercent
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BatteryDevices
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: f1a43c7f-69eb-4e00-bdf2-bc21e85a97f9
+		summarizeBy: sum
+		sourceColumn: BatteryDevices
+
+		annotation SummarizationSetBy = Automatic
+
+	column GridImportWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 3a52a3a1-1a9f-4d5c-8951-0b7635b9bb3f
+		summarizeBy: sum
+		sourceColumn: GridImportWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GridExportWh
+		dataType: double
+		sourceProviderType: double
+		lineageTag: a61d1836-895a-4a24-afde-969a09ae8470
+		summarizeBy: sum
+		sourceColumn: GridExportWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TimeKeyUTC
+		dataType: int64
+		sourceProviderType: nvarchar(max)
+		lineageTag: c43d9972-d1a5-4b23-869b-379d3016603b
+		summarizeBy: sum
+		sourceColumn: TimeKeyUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeKeyLocal
+		dataType: int64
+		sourceProviderType: nvarchar(max)
+		lineageTag: 723d3518-abe2-46e7-b151-c7678ad59c65
+		summarizeBy: none
+		sourceColumn: TimeKeyLocal
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Solar Telemetry' = m
+		mode: import
+		source =
+				let
+				    Source = AzureDataExplorer.Contents("https://trd-1z0ryh7rvnmjd3dvsz.z7.kusto.fabric.microsoft.com", "HaleJoli", "SolarTelemetry#(lf)| project #(lf)    SystemId = toint(system_id),#(lf)    ReadingDateTimeUTC = todatetime(reading_time),#(lf)    ReadingDateUTC = startofday(todatetime(reading_time)),#(lf)    TimeKeyUTC = datetime_part('hour', todatetime(reading_time)) * 100 + datetime_part('minute', todatetime(reading_time)),#(lf)    ReadingDateTimeLocal = todatetime(reading_time_local),#(lf)    ReadingDateLocal = todatetime(reading_time_local),#(lf)    TimeKeyLocal = datetime_part('hour', todatetime(reading_time_local)) * 100 + datetime_part('minute', todatetime(reading_time_local)),#(lf)    ProductionWh = toreal(production_wh),#(lf)    ProductionDevices = toint(production_devices),#(lf)    ConsumptionWh = toreal(consumption_wh),#(lf)    ConsumptionDevices = toint(consumption_devices),#(lf)    BatteryChargeWh = toreal(battery_charge_wh),#(lf)    BatteryDischargeWh = toreal(battery_discharge_wh),#(lf)    BatteryStateOfChargePercent = toreal(battery_soc_percent),#(lf)    BatteryDevices = toint(battery_devices),#(lf)    GridImportWh = toreal(grid_import_wh),#(lf)    GridExportWh = toreal(grid_export_wh)", [MaxRows=null, MaxSize=null, NoTruncate=null, AdditionalSetStatements=null]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"ReadingDateTimeUTC", type datetime}, {"ReadingDateTimeLocal", type datetime}, {"ReadingDateLocal", type date}, {"TimeKeyUTC", Int64.Type}, {"TimeKeyLocal", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "HaleJoliSolar"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "11ac485b-9041-4ab3-9b0e-52ce19ed89b5"
+  }
+}
