@@ -1,0 +1,52 @@
+/// Configuration parameters for cost calculations
+table Parameters
+	lineageTag: e6a0fcdd-36cb-4672-8e8c-cf34347877f7
+
+	/// Current electricity rate ($/kWh) - change in Parameters table
+	measure 'Power Rate' = LOOKUPVALUE(Parameters[Value], Parameters[Parameter], "Power Rate ($/kWh)")
+		formatString: $#,##0.0000
+		displayFolder: Rate Parameters
+		lineageTag: acddd11d-c1a3-443f-878a-db8a191eec29
+
+	/// TOU On-Peak rate (5PM-9PM) - change in Parameters table
+	measure 'TOU On-Peak Rate' = LOOKUPVALUE(Parameters[Value], Parameters[Parameter], "TOU On-Peak Rate")
+		formatString: $#,##0.00
+		displayFolder: Rate Parameters
+		lineageTag: 0e1cab27-992f-4d12-b05b-2375003d5bc0
+
+	/// TOU Mid-Day rate (9AM-5PM) - change in Parameters table
+	measure 'TOU Mid-Day Rate' = LOOKUPVALUE(Parameters[Value], Parameters[Parameter], "TOU Mid-Day Rate")
+		formatString: $#,##0.00
+		displayFolder: Rate Parameters
+		lineageTag: 24567e7d-182a-46d3-b3ef-2249b65ea34f
+
+	/// TOU Off-Peak rate (9PM-9AM) - change in Parameters table
+	measure 'TOU Off-Peak Rate' = LOOKUPVALUE(Parameters[Value], Parameters[Parameter], "TOU Off-Peak Rate")
+		formatString: $#,##0.00
+		displayFolder: Rate Parameters
+		lineageTag: 75f068df-8d6d-47f0-815c-cb6a615c13fe
+
+	column Parameter
+		lineageTag: f11797b6-adf4-4dbf-9e18-e6deb82468a7
+		isNameInferred
+		sourceColumn: [Parameter]
+
+	column Value
+		lineageTag: 64931244-5453-47f3-a22c-f350c1ba490a
+		isNameInferred
+		sourceColumn: [Value]
+
+	partition Parameters = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Parameter", STRING,
+				    "Value", DOUBLE,
+				    {
+				        {"Power Rate ($/kWh)", 0.4831},
+				        {"TOU On-Peak Rate", 0.57},
+				        {"TOU Mid-Day Rate", 0.42},
+				        {"TOU Off-Peak Rate", 0.38}
+				    }
+				)
+

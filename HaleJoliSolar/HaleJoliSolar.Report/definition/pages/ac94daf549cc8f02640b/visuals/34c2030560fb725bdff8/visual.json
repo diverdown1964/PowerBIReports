@@ -1,0 +1,104 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "34c2030560fb725bdff8",
+  "position": {
+    "x": 640.43331076506433,
+    "y": 485.308056872038,
+    "z": 1007,
+    "height": 234.85443466486123,
+    "width": 640.43331076506433,
+    "tabOrder": 1003
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Solar Telemetry"
+                    }
+                  },
+                  "Property": "Self-Sufficiency Rate"
+                }
+              },
+              "queryRef": "Solar Telemetry.Self-Sufficiency Rate",
+              "nativeQueryRef": "Self-Sufficiency Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Solar Telemetry"
+                    }
+                  },
+                  "Property": "Total Battery Charge"
+                }
+              },
+              "queryRef": "Solar Telemetry.Total Battery Charge",
+              "nativeQueryRef": "Charge (kWh)",
+              "displayName": "Charge (kWh)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Solar Telemetry"
+                    }
+                  },
+                  "Property": "Total Battery Discharge"
+                }
+              },
+              "queryRef": "Solar Telemetry.Total Battery Discharge",
+              "nativeQueryRef": "Discharge (kWh)",
+              "displayName": "Discharge (kWh)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Solar Telemetry"
+                  }
+                },
+                "Property": "Self-Sufficiency Rate"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "value": [
+        {
+          "properties": {
+            "horizontalAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

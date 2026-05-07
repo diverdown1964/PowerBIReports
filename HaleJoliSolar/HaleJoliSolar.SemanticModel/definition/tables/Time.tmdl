@@ -1,0 +1,183 @@
+table Time
+	lineageTag: 3c4a5b54-1be1-413d-953e-23dfce9f5eb1
+
+	column Time
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: 8a8b22d1-b5ba-45f2-bb89-a5ab99c57456
+		summarizeBy: none
+		sourceColumn: Time
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column Hour
+		dataType: int64
+		formatString: 0
+		lineageTag: 9dc77fe4-d87c-4686-b4de-fba143612edf
+		summarizeBy: none
+		sourceColumn: Hour
+
+		annotation SummarizationSetBy = Automatic
+
+	column Minute
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c53ae72-a64f-4222-9ebe-ab72166de9fb
+		summarizeBy: none
+		sourceColumn: Minute
+
+		annotation SummarizationSetBy = Automatic
+
+	column MinuteOfDay
+		dataType: int64
+		formatString: 0
+		lineageTag: 15ba61dd-9c60-4f4a-9c41-8bd561c10e60
+		summarizeBy: none
+		sourceColumn: MinuteOfDay
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time12Hour
+		dataType: string
+		lineageTag: 82c59668-bcfd-4e7a-9f76-1c8224338bab
+		summarizeBy: none
+		sourceColumn: Time12Hour
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time24Hour
+		dataType: string
+		lineageTag: 81dfff61-9e0e-42f6-96b8-a188f323b448
+		summarizeBy: none
+		sourceColumn: Time24Hour
+
+		annotation SummarizationSetBy = Automatic
+
+	column HourText
+		dataType: string
+		lineageTag: 6efa3d2e-fd1b-4e20-a315-eba1ba85cb2c
+		summarizeBy: none
+		sourceColumn: HourText
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeOfDay
+		dataType: string
+		lineageTag: c6abf5f9-d768-4ca4-8d41-2ecad6472d68
+		summarizeBy: none
+		sourceColumn: TimeOfDay
+
+		annotation SummarizationSetBy = Automatic
+
+	column AM/PM
+		dataType: string
+		lineageTag: 8b1528af-0e7c-4e51-a9c2-b27138c8c689
+		summarizeBy: none
+		sourceColumn: AM/PM
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsBusinessHours
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ae7ea59d-57ac-4d40-8494-db6d2ae46e4b
+		summarizeBy: none
+		sourceColumn: IsBusinessHours
+
+		annotation SummarizationSetBy = Automatic
+
+	column HourRange
+		dataType: string
+		lineageTag: 373df10f-b759-4909-abf6-f8cb20bf795a
+		summarizeBy: none
+		sourceColumn: HourRange
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuarterOfHour
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e6fcd84-aecb-4bc9-a68b-f364c8f388e0
+		summarizeBy: none
+		sourceColumn: QuarterOfHour
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cd473655-2566-452a-9d62-5eb9a1fcba75
+		summarizeBy: none
+		sourceColumn: TimeKey
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Hour Hierarchy'
+		lineageTag: 19e7cc12-5afd-4577-a232-b1ff26a04a61
+
+		level Hour
+			lineageTag: ccd1be18-89fa-4ada-8751-ff22fe1db8a2
+			column: Hour
+
+		level Minute
+			lineageTag: 8408e404-14f6-4789-8296-0d2db9713915
+			column: Minute
+
+	partition Time = m
+		mode: import
+		source = ```
+				let
+				    Source = List.Times(
+				        #time(0, 0, 0),           
+				        24 * 4,                    
+				        #duration(0, 0, 15, 0)    
+				    ),
+				    #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), {"Time"}, null, ExtraValues.Error),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table", {{"Time", type time}}),
+				    
+				    // Basic Components
+				    #"Added Hour" = Table.AddColumn(#"Changed Type", "Hour", each Time.Hour([Time]), Int64.Type),
+				    #"Added Minute" = Table.AddColumn(#"Added Hour", "Minute", each Time.Minute([Time]), Int64.Type),
+				    #"Added MinuteOfDay" = Table.AddColumn(#"Added Minute", "MinuteOfDay", each Time.Hour([Time]) * 60 + Time.Minute([Time]), Int64.Type),
+				    
+				    // Formatted Text
+				    #"Added Time12Hr" = Table.AddColumn(#"Added MinuteOfDay", "Time12Hour", each Time.ToText([Time], "hh:mm tt"), type text),
+				    #"Added Time24Hr" = Table.AddColumn(#"Added Time12Hr", "Time24Hour", each Time.ToText([Time], "HH:mm"), type text),
+				    #"Added HourText" = Table.AddColumn(#"Added Time24Hr", "HourText", each Time.ToText([Time], "hh tt"), type text),
+				    
+				    // Time Periods
+				    #"Added Period" = Table.AddColumn(#"Added HourText", "TimeOfDay", each 
+				        if [Hour] >= 0 and [Hour] < 6 then "Night"
+				        else if [Hour] >= 6 and [Hour] < 12 then "Morning"
+				        else if [Hour] >= 12 and [Hour] < 18 then "Afternoon"
+				        else "Evening", type text),
+				    
+				    #"Added AMPMPeriod" = Table.AddColumn(#"Added Period", "AM/PM", each 
+				        if [Hour] < 12 then "AM" else "PM", type text),
+				    
+				    // Business Hours (adjust as needed)
+				    #"Added BusinessHours" = Table.AddColumn(#"Added AMPMPeriod", "IsBusinessHours", each 
+				        [Hour] >= 9 and [Hour] < 17, type logical),
+				    
+				    // Hour Groups (for grouping)
+				    #"Added HourRange" = Table.AddColumn(#"Added BusinessHours", "HourRange", each 
+				        Time.ToText([Time], "HH:00") & " - " & Time.ToText(Time.From(#time([Hour], 59, 59)), "HH:59"), type text),
+				    
+				    // Quarter Hour (1-4 within each hour)
+				    #"Added QuarterHour" = Table.AddColumn(#"Added HourRange", "QuarterOfHour", each 
+				        Number.RoundDown([Minute] / 15) + 1, Int64.Type),
+				    // Sort Keys
+				    #"Added SortKey" = Table.AddColumn(#"Added QuarterHour", "TimeSortKey", each 
+				        [Hour] * 100 + [Minute], Int64.Type),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Added SortKey",{"Time", "TimeSortKey", "Hour", "Minute", "MinuteOfDay", "Time12Hour", "Time24Hour", "HourText", "TimeOfDay", "AM/PM", "IsBusinessHours", "HourRange", "QuarterOfHour"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"TimeSortKey", "TimeKey"}})
+				in
+				    #"Renamed Columns"
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
