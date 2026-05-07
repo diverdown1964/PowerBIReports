@@ -1,9 +1,0 @@
-createOrReplace
-
-	ref table 'Solar Telemetry'
-
-		/// Total energy consumed (Wh)
-		measure 'Average Consumption' = AVERAGE('Solar Telemetry'[ConsumptionWh])/1000
-			formatString: #,##0
-			displayFolder: Energy Averages
-
