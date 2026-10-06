@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Attack Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "95008519-c7bf-4052-8d71-3047750566c0"
+  }
+}
